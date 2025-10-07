@@ -22,5 +22,10 @@ async def on_ready():
 @bot.command()
 async def hello(ctx):
     await ctx.send(f"Hello, {ctx.author.display_name}! 👋")
+    
+@bot.command()
+async def pomodoro(ctx):
+    await start_pomodoro(ctx)
+
 
 bot.run(discord_token)
