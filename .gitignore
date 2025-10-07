@@ -1,0 +1,33 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Environment
+.env
+.venv/
+env/
+venv/
+
+# macOS metadata
+.DS_Store
+
+# VSCode config (optional)
+.vscode/
+
+# SQLite DB (if used)
+*.db
+
+# Logs (if any)
+*.log
+
+# Python compiled objects
+*.so
+*.egg
+*.egg-info/
+
+# Coverage / testing
+.coverage
+htmlcov/
+.cache/
+pytest_cache/
