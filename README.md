@@ -126,7 +126,7 @@ Please open an issue first to discuss major changes.
 
 MIT License  
 Copyright © 2025  
-Maintained by [Chris](https://github.com/yourusername)
+Maintained by [Chris](https://github.com/Chrisvrsa)
 
 ---
 
