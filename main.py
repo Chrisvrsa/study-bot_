@@ -19,16 +19,15 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 async def on_ready():
     print(f"Logged in as {bot.user}")
 
-
-@bot.command()
-async def hello(ctx):
-    await ctx.send(f"Hello, {ctx.author.display_name}! 👋")
     
-@bot.command()
+@bot.group()
 async def pomodoro(ctx):
-    await start_pomodoro(ctx)
+    """Main pomodoro command group."""
+    if ctx.invoked_subcommand is None:
+        await start_pomodoro(ctx)
     
-@bot.command()
+    
+@pomodoro.command(name="status")
 async def pomodoro_status(ctx):
     user_id = ctx.author.id
     remaining = get_status(user_id)
