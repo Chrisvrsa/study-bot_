@@ -23,7 +23,7 @@ async def on_ready():
     
 @bot.command()
 async def manual(ctx):
-    await ctx.send("\n`!pomodoro start` Start a pomodoro timer!\n`!pomodoro status` Check the status of your pomodoro timer!\n`!pomodoro cancel` Cancel your pomodoro timer\n\nAdditional documentation can be found at https://github.com/Chrisvrsa/study-bot")
+    await ctx.send("\n`!pomodoro start` Start a pomodoro timer!\n`!pomodoro status` Check the status of your pomodoro timer!\n`!pomodoro cancel` Cancel your pomodoro timer\n\nAdditional documentation can be found at https://github.com/Chrisvrsa/study-bot_")
     
 
 @bot.group()
