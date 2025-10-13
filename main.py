@@ -64,7 +64,7 @@ async def card(ctx, *, content: str):
         return
 
     parts = content.split("|")
-    question = parts[0].strip('" ').strip()
+    question = parts[0].strip('" ').strip() # removes space and '"'
     answer = parts[1].strip('" ').strip()
 
     # Save it
