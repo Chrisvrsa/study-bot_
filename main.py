@@ -3,7 +3,7 @@ import asyncio
 import os
 from discord.ext import commands
 from dotenv import load_dotenv
-from pomodoro import start_pomodoro, get_status, cancel_pomodoro
+from pomodoro import start_pomodoro, get_status, cancel_pomodoro, long_pomodoro
 from flashcards import init_db, add_flashcard, get_random_flashcard
 init_db()
 
@@ -38,8 +38,12 @@ async def pomodoro(ctx):
     """Main pomodoro command group."""
     if ctx.invoked_subcommand is None:
         await start_pomodoro(ctx)
+
+@pomodoro.command(name="long")
+async def pomodoro_long(ctx):
+    await long_pomodoro(ctx)
     
-    
+ 
 @pomodoro.command(name="status")
 async def pomodoro_status(ctx):
     user_id = ctx.author.id
@@ -52,8 +56,8 @@ async def pomodoro_status(ctx):
     minutes = remaining // 60
     seconds = remaining % 60
     await ctx.send(f"⏱️ {ctx.author.display_name}, your pomodoro has {minutes} minutes and {seconds} seconds remaining!")
-    
-    
+
+
 @pomodoro.command(name="cancel")
 async def pomodoro_cancel(ctx):
     

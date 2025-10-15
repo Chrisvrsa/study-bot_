@@ -4,12 +4,19 @@ from datetime import datetime, timedelta
 # Key = user_id, Value = dict with end time and asyncio task
 pomodoro_timers = {}
 
-# 25 minutes. Each minute has 60 seconds. This is the standard duration for a Pomodoro timer.
+# 25 minutes. Each minute has 60 seconds. This is the default duration for a Pomodoro timer.
 POMODORO_DURATION = 25 * 60
+
+# 50 minutes. Uses BREAK_DURATION_LONG and extends the default. (10 minute break, 50 minute timer)
+POMODORO_DURATION_LONG = (POMODORO_DURATION) * 2 
+
+
 BREAK_DURATION = 5 * 60
+BREAK_DURATION_LONG = (BREAK_DURATION) * 2
 
 
-async def start_pomodoro(ctx, options=None):
+# default
+async def start_pomodoro(ctx):
     user_id = ctx.author.id
 
     # Check if a timer is running already
@@ -21,7 +28,7 @@ async def start_pomodoro(ctx, options=None):
 
     end_time = datetime.now() + timedelta(seconds=POMODORO_DURATION)
 
-    task = asyncio.create_task(pomodoro_timer(ctx, user_id, POMODORO_DURATION))
+    task = asyncio.create_task(pomodoro_timer(ctx, user_id)) # default call to pomodoro_timer
 
     pomodoro_timers[user_id] = {"task": task, "end_time": end_time}
 
@@ -30,15 +37,47 @@ async def start_pomodoro(ctx, options=None):
     )
 
 
-async def pomodoro_timer(ctx, user_id, duration):
-    try:
-        await asyncio.sleep(duration)
-        await ctx.send(
-            f"⏰ Time's up, {ctx.author.mention}! You did great! 👏 Break time! ☕"
-        )
+async def long_pomodoro(ctx):
+    user_id = ctx.author.id
 
-        pomodoro_timers.pop(user_id, None)
-        await break_pomodoro(ctx)
+    # Check if a timer is running already
+    if user_id in pomodoro_timers:
+        await ctx.send(
+            "You already have a Pomodoro running! Use `!pomodoro status` to check it's status. Cancel it with `!pomodoro cancel`."
+
+        )
+        return
+    
+    end_time = datetime.now() + timedelta(seconds=POMODORO_DURATION_LONG)
+
+    task = asyncio.create_task(pomodoro_timer(ctx, user_id, POMODORO_DURATION_LONG))
+
+    pomodoro_timers[user_id] = {"task": task, "end_time": end_time}
+
+    await ctx.send(
+        "🍅 Pomodoro started! I'll notify you in 50 minutes. Use `!pomodoro status` to check progress."
+
+    )
+
+
+async def pomodoro_timer(ctx, user_id, duration=POMODORO_DURATION): # default value is 25 minutes. Can override
+    try:
+        if duration == POMODORO_DURATION_LONG:
+            await asyncio.sleep(POMODORO_DURATION_LONG) # long
+            await ctx.send(
+                f"⏰ Time's up, {ctx.author.mention}! You did great! 👏 Break time! ☕"
+            )
+            pomodoro_timers.pop(user_id, None)
+            await break_pomodoro(ctx, True)
+
+        else: # default
+            await asyncio.sleep(duration)
+            await ctx.send(
+                f"⏰ Time's up, {ctx.author.mention}! You did great! 👏 Break time! ☕"
+            )
+            pomodoro_timers.pop(user_id, None)
+            await break_pomodoro(ctx)
+
 
     except asyncio.CancelledError:
         await ctx.send("Pomodoro cancelled!")
@@ -57,13 +96,21 @@ async def cancel_pomodoro(ctx):
         await ctx.send(f"{ctx.author.mention}, you don't have a Pomodoro running!")
 
 
-# gets called automatically when the pomodoro timer is done
-async def break_pomodoro(ctx):
-    await asyncio.sleep(BREAK_DURATION)
-    await ctx.send("Your break is set for 5 minutes! I'll notify you when it's over.")
-    await ctx.send(
-        f"⏰ Time's up, {ctx.author.mention}! You did great! 👏 Back to work! Starting again? Use `!pomodoro start`"
-    )
+# gets called automatically when the pomodoro timer is done, default non extended
+async def break_pomodoro(ctx, extend=False):
+    if extend:
+        await asyncio.sleep(BREAK_DURATION_LONG)
+        await ctx.send("Your break is set for 10 minutes! I'll notify you when it's over.")
+        await ctx.send(
+            f"⏰ Time's up, {ctx.author.mention}! You did great! 👏 Back to work! Starting again? Use `!pomodoro start`"
+        )
+        
+    else:
+        await asyncio.sleep(BREAK_DURATION)
+        await ctx.send("Your break is set for 5 minutes! I'll notify you when it's over.")
+        await ctx.send(
+            f"⏰ Time's up, {ctx.author.mention}! You did great! 👏 Back to work! Starting again? Use `!pomodoro start`"
+        )
 
 
 def get_status(user_id):
