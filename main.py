@@ -3,7 +3,7 @@ import asyncio
 import os
 from discord.ext import commands
 from dotenv import load_dotenv
-from pomodoro import start_pomodoro, get_status, cancel_pomodoro, long_pomodoro
+from pomodoro import start_pomodoro, get_status, cancel_pomodoro, long_pomodoro, custom_break
 from flashcards import init_db, add_flashcard, get_random_flashcard
 init_db()
 
@@ -62,8 +62,21 @@ async def pomodoro_status(ctx):
 async def pomodoro_cancel(ctx):
     
     await cancel_pomodoro(ctx)
-    
 
+
+#break-manual
+@pomodoro.command(name="break")
+async def pomodoro_break(ctx, duration: int = 5):
+    await custom_break(ctx, duration)
+
+
+
+@bot.event
+async def on_shutdown():
+    for task in asyncio.all_tasks():
+        task.cancel()  
+
+# beyond this point = flashcard commands
 @bot.command()
 async def card(ctx, *, content: str):
     """Adds a flashcard using: !card add "Question" | "Answer" """
@@ -108,6 +121,6 @@ async def quiz(ctx):
     except asyncio.TimeoutError:
         await ctx.send(f"⌛ Time's up! The answer was: **{answer}**.")
     
-    
-    
+
+
 bot.run(BOT_TOKEN)

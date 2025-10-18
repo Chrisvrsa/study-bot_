@@ -15,6 +15,7 @@ BREAK_DURATION = 5 * 60
 BREAK_DURATION_LONG = (BREAK_DURATION) * 2
 
 
+
 # default
 async def start_pomodoro(ctx):
     user_id = ctx.author.id
@@ -80,8 +81,12 @@ async def pomodoro_timer(ctx, user_id, duration=POMODORO_DURATION): # default va
 
 
     except asyncio.CancelledError:
-        await ctx.send("Pomodoro cancelled!")
-        pomodoro_timers.pop(user_id, None)
+        if not ctx.bot.is_closed():
+            await ctx.send("Pomodoro has either been canceled or paused! ✅ ")
+            pomodoro_timers.pop(user_id, None)
+        raise # allows proper clean-up
+        
+
 
 
 async def cancel_pomodoro(ctx):
@@ -96,7 +101,9 @@ async def cancel_pomodoro(ctx):
         await ctx.send(f"{ctx.author.mention}, you don't have a Pomodoro running!")
 
 
-# gets called automatically when the pomodoro timer is done, default non extended
+# gets called automatically when the pomodoro timer is done
+# depending on pomodoro length, creates the proper timer
+# non-manual
 async def break_pomodoro(ctx, extend=False):
     if extend:
         await asyncio.sleep(BREAK_DURATION_LONG)
@@ -113,9 +120,32 @@ async def break_pomodoro(ctx, extend=False):
         )
 
 
+# manual break
+async def custom_break(ctx, duration: int = 5):
+    user_id = ctx.author.id
+    if user_id not in pomodoro_timers:
+        await ctx.send("Start a pomodoro first with `!pomodoro`.")
+        return
+    
+    task_info = pomodoro_timers.pop(user_id)
+    task_info["task"].cancel()
+    remaining = (task_info["end_time"] - datetime.now()).total_seconds()    # timedelta object, so we can use .total_seconds()
+    await ctx.send(f"⏸️ Paused your Pomodoro. Taking a {duration}-minute break!")
+
+    await asyncio.sleep(duration * 60)
+    await ctx.send(f"⏰ Break over, {ctx.author.mention}! Resuming Pomodoro!")
+
+    # Resume with remaining time
+    end_time = datetime.now() + timedelta(seconds=remaining)
+    new_task = asyncio.create_task(pomodoro_timer(ctx, user_id, remaining))
+    pomodoro_timers[user_id] = {"task": new_task, "end_time": end_time}
+    await ctx.send(f"Current time remaining: {(pomodoro_timers[user_id]['end_time'] - datetime.now()).total_seconds() / 60:.2f} minutes")
+
+
 def get_status(user_id):
     if user_id in pomodoro_timers:
         end_time = pomodoro_timers[user_id]["end_time"]
         remaining = (end_time - datetime.now()).total_seconds()
         return max(0, int(remaining))
     return None
+
