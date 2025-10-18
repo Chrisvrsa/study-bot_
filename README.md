@@ -8,7 +8,7 @@ StudyBuddy is a Discord bot built with Python that helps students stay focused a
 
 * 🍅 `!pomodoro start` – Start a 25-minute focus timer (default)
 * ⏱️ `!pomodoro long` – Start an extended 50-minute focus timer with a 10-minute break
-* ☕ `!pomodoro break` – Begin a manual break (in process)
+* ☕ `!pomodoro break` – Begin a manual break. Default is 5 minutes, can add a custom break
 * 📖 `!card add "Question" | "Answer"` – Add a custom flashcard 
 * 🧠 `!quiz` – Test yourself with random flashcards
 * 🎯 `!stats` – Track quiz performance *(coming soon)*
