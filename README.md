@@ -67,6 +67,7 @@ Flashcards are stored per user using a local **SQLite database**, ensuring persi
 | ------------------ | ---------------------------------- |
 | `!pomodoro start`  | Start a 25-minute Pomodoro session |
 | `!pomodoro long`   | Start a 50-minute extended session |
+| `!pomodoro break`  | `!pomodoro break 20` = 20 minutes  |
 | `!pomodoro status` | Check how much time remains        |
 | `!pomodoro cancel` | Cancel your active timer           |
 
@@ -109,7 +110,7 @@ studybuddy-bot/
 
 ## 🚀 Roadmap
 
-* [ ] Add custom Pomodoro durations (`!pomodoro custom <minutes>`)
+* [x] Add custom Pomodoro durations (`!pomodoro custom <minutes>`)
 * [ ] Add daily flashcard reminders via DM
 * [ ] Implement stats tracking for Pomodoro and quizzes
 * [ ] Support slash commands for Discord UI integration

@@ -26,10 +26,11 @@ async def manual(ctx):
     await ctx.send(
         "`!pomodoro start` Start a pomodoro timer!\n"
         "`!pomodoro status` Check the status of your pomodoro timer!\n"
-        "`!pomodoro cancel` Cancel your pomodoro timer\n\n"
+        "`!pomodoro cancel` Cancel your pomodoro timer\n"
+        "`!pomodoro break` Take a break! (Default 5 minutes)\n\n"
         "`!card add \"Question\" | \"Answer\"` Adds a new flashcard to study!\n"
         "`!quiz` to quiz\n\n"
-        "Additional documentation can be found at https://github.com/Chrisvrsa/study-bot_"
+        "Additional documentation and commands can be found at https://github.com/Chrisvrsa/study-bot_"
     )
     
 
